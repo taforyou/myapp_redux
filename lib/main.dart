@@ -3,6 +3,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:myapp_redux/ducks/state.dart';
+import 'package:myapp_redux/ducks/video.dart';
 import 'package:myapp_redux/ducks/counter.dart';
 
 void main() {
