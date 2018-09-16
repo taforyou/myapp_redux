@@ -19,4 +19,8 @@ AppState rootReducer(AppState state, dynamic action) {
   );
 }
 
-final allEpics = combineEpics<AppState>([fetchVideoEpic, deleteVideoEpic]);
+final allEpics = combineEpics<AppState>([
+  createVideoEpic,
+  fetchVideoEpic,
+  deleteVideoEpic
+]);

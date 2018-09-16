@@ -42,6 +42,13 @@ class SetVideos extends VideoAction {
   SetVideos(this.videos);
 }
 
+class CreateVideo extends VideoAction {
+  final String name;
+  final String description;
+
+  CreateVideo(this.name, this.description);
+}
+
 class DeleteVideo extends VideoAction {
   final String id;
 
@@ -82,10 +89,37 @@ Future<DeleteVideo> deleteVideo(DeleteVideo action) async {
   final response = await http.delete(url);
 
   if (response.statusCode != 200) {
-    throw Exception('Delete API error');
+    throw Exception('Delete Video API error');
   }
 
   return action;
+}
+
+Future<List<Video>> createVideo(List<Video> videos, CreateVideo action) async {
+  print('Creating Video ${action.name}');
+
+  final url = 'https://5b9e0cac133f660014c91912.mockapi.io/videos';
+
+  final response = await http.post(
+    url,
+    body: {
+      'name': action.name,
+      'description': action.description,
+    },
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }
+  );
+
+  if (response.statusCode != 201) {
+    throw Exception('Create Video API error');
+  }
+
+  final video = Video.fromJson(json.decode(response.body));
+
+  return <Video>[]
+    ..addAll(videos)
+    ..add(video);
 }
 
 // -- Epic --
@@ -107,4 +141,11 @@ Stream<dynamic> deleteVideoEpic(Stream<dynamic> actions, EpicStore<AppState> sto
 
       return SetVideos(videos);
     });
+}
+
+Stream<dynamic> createVideoEpic(Stream<dynamic> actions, EpicStore<AppState> store) {
+  return actions
+    .where((action) => action is CreateVideo)
+    .asyncMap((action) => createVideo(store.state.videos, action))
+    .map((videos) => SetVideos(videos));
 }

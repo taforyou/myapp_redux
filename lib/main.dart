@@ -57,8 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
       ),
       body: Flex(
-        direction: Axis.horizontal,
-        children: [VideoList()]
+        direction: Axis.vertical,
+        children: [VideoList(), VideoCreator()]
       ),
       floatingActionButton: new StoreConnector<AppState, VoidCallback>(
         converter: (store) {
@@ -98,6 +98,31 @@ class VideoList extends StatelessWidget {
                 onTap: () => store.dispatch(DeleteVideo(video.id)),
               );
             },
+          )
+        );
+      },
+    );
+  }
+}
+
+class VideoCreator extends StatelessWidget {
+  const VideoCreator({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new StoreConnector<AppState, Store<AppState>>(
+      converter: (Store<AppState> store) => store,
+      // context >> ค่าต่างๆ ของ Flutter เช่น Theme
+      // count >> อันนี้ส่วนของ State ใน redux
+      builder: (context, store) {
+        return Flexible(
+          child: RaisedButton(
+            child: Text('Add Video'),
+            onPressed: () {
+              return store.dispatch(CreateVideo('Hello', 'Lorem ipsum dolor sit amet consectetur adipisicing elit.'));
+            },
+            color: Colors.teal,
+            textColor: Colors.white,
           )
         );
       },
