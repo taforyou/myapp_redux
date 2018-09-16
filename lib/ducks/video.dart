@@ -30,8 +30,10 @@ class Video {
 
 abstract class VideoAction {}
 
+// => ขาไป: ผู้ใช้เป็นคนเรียก
 class FetchVideos extends VideoAction {}
 
+// => ขากลับ: Epic เป็นคนเรียก
 class SetVideos extends VideoAction {
   final List<Video> videos;
 
