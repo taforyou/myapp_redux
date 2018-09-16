@@ -1,26 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:myapp_redux/appState.dart';
+import 'package:myapp_redux/reducers/appReducers.dart';
 
-void main() => runApp(new MyApp()); // อันเดิม
-// void main() {
-//   final store = new Store<AppState>
-// }
+void main() {
+  final store = new Store<AppState>(
+    appReducer,
+    initialState: AppState.initial(),
+  );
+
+  runApp(new MyApp(
+    store: store,
+    title: 'Flutter Redux Demo',
+  ));
+}
 
 class MyApp extends StatelessWidget {
+  final Store<AppState> store;
+  final String title;
+
+  MyApp({Key key, this.store, this.title}) : super(key: key);
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.blue,
+    return StoreProvider<AppState>(
+      store: store,
+      child: new MaterialApp(
+        title: 'Flutter Demo',
+        theme: new ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: new MyHomePage(title: 'Flutter Demo Home Page'),
       ),
-      home: new MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
@@ -51,18 +69,30 @@ class _MyHomePageState extends State<MyHomePage> {
             new Text(
               'You have pushed the button this many times:',
             ),
-            new Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            new StoreConnector<AppState, int>(
+              converter: (Store<AppState> store) => store.state.count,
+              builder: (context, count) {
+                return new Text(
+                  count.toString(),
+                  style: Theme.of(context).textTheme.display1,
+                );
+              },
             ),
           ],
         ),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
-      ),
+      // floatingActionButton: new StoreConnector<AppState, VoidCallback>(
+      //   converter: (store) {
+      //     return () => store.dispatch(IncrementalAction(10));
+      //   },
+      //   builder: (context, callback) {
+      //     return new FloatingActionButton(
+      //       onPressed: callback,
+      //       tooltip: 'Increment',
+      //       child: new Icon(Icons.add),
+      //     );
+      //   },
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
