@@ -81,20 +81,21 @@ class VideoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new StoreConnector<AppState, List<Video>>(
-      converter: (Store<AppState> store) => store.state.videos,
+    return new StoreConnector<AppState, Store<AppState>>(
+      converter: (Store<AppState> store) => store,
       // context >> ค่าต่างๆ ของ Flutter เช่น Theme
       // count >> อันนี้ส่วนของ State ใน redux
-      builder: (context, videos) {
+      builder: (context, store) {
         return Flexible(
           child: ListView.builder(
-            itemCount: videos.length,
+            itemCount: store.state.videos.length,
             itemBuilder: (context, index) {
-              final video = videos[index];
+              final video = store.state.videos[index];
 
               return ListTile(
                 title: Text(video.name),
-                subtitle: Text(video.category),
+                subtitle: Text(video.description),
+                onTap: () => store.dispatch(DeleteVideo(video.id)),
               );
             },
           )
