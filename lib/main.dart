@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:myapp_redux/appState.dart';
-import 'package:myapp_redux/reducers/appReducers.dart';
-import 'package:myapp_redux/actions/appActions.dart';
+
+import 'package:myapp_redux/ducks/state.dart';
+import 'package:myapp_redux/ducks/counter.dart';
 
 void main() {
   final store = new Store<AppState>(
@@ -39,7 +39,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
