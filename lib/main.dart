@@ -71,6 +71,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             new StoreConnector<AppState, int>(
               converter: (Store<AppState> store) => store.state.count,
+              // context >> ค่าต่างๆ ของ Flutter เช่น Theme
+              // count >> อันนี้ส่วนของ State ใน redux
               builder: (context, count) {
                 return new Text(
                   count.toString(),
