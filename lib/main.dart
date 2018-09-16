@@ -3,6 +3,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:myapp_redux/appState.dart';
 import 'package:myapp_redux/reducers/appReducers.dart';
+import 'package:myapp_redux/actions/appActions.dart';
 
 void main() {
   final store = new Store<AppState>(
@@ -83,18 +84,18 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      // floatingActionButton: new StoreConnector<AppState, VoidCallback>(
-      //   converter: (store) {
-      //     return () => store.dispatch(IncrementalAction(10));
-      //   },
-      //   builder: (context, callback) {
-      //     return new FloatingActionButton(
-      //       onPressed: callback,
-      //       tooltip: 'Increment',
-      //       child: new Icon(Icons.add),
-      //     );
-      //   },
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
+      floatingActionButton: new StoreConnector<AppState, VoidCallback>(
+        converter: (store) {
+          return () => store.dispatch(IncrementalAction());
+        },
+        builder: (context, callback) {
+          return new FloatingActionButton(
+            onPressed: callback,
+            tooltip: 'Increment',
+            child: new Icon(Icons.add),
+          );
+        },
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

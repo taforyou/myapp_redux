@@ -7,7 +7,7 @@ final appReducer = combineReducers<AppState>([
 ]);
 
 AppState setIncremental(AppState state, IncrementalAction action) {
-  return AppState(count: state.count + 1);
+  return AppState(count: state.count + action.count);
 }
 
 
