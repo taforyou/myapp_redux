@@ -53,10 +53,6 @@ class DeleteVideo extends VideoAction {
 List<Video> videoReducer(List<Video> state, VideoAction action) {
   print('Action is $action');
 
-  if (action is DeleteVideo) {
-    return state.where((video) => video.id != action.id).toList();
-  }
-
   if (action is SetVideos) {
     return action.videos;
   }
@@ -79,14 +75,36 @@ Future<List<Video>> fetchVideos() async {
   return videos.map((video) => Video.fromJson(video)).toList();
 }
 
+Future<DeleteVideo> deleteVideo(DeleteVideo action) async {
+  print('Deleting Video ${action.id}');
+
+  final url = 'https://5b9e0cac133f660014c91912.mockapi.io/videos/${action.id}';
+  final response = await http.delete(url);
+
+  if (response.statusCode != 200) {
+    throw Exception('Delete API error');
+  }
+
+  return action;
+}
+
 // -- Epic --
 
-Stream<dynamic> fetchVideoEpic(
-    Stream<dynamic> actions, EpicStore<AppState> store) {
-  print('Fetching Video...');
-
+Stream<dynamic> fetchVideoEpic(Stream<dynamic> actions, EpicStore<AppState> store) {
   return actions
-      .where((action) => action is FetchVideos)
-      .asyncMap((action) => fetchVideos())
-      .map((data) => SetVideos(data));
+    .where((action) => action is FetchVideos)
+    .asyncMap((action) => fetchVideos())
+    .map((data) => SetVideos(data));
+}
+
+Stream<dynamic> deleteVideoEpic(Stream<dynamic> actions, EpicStore<AppState> store) {
+  return actions
+    .where((action) => action is DeleteVideo)
+    .asyncMap((action) => deleteVideo(action))
+    .map((action) {
+      final videos = store.state.videos.where((video) => video.id != action.id).toList();
+      print('Filtering out Video ${action.id}');
+
+      return SetVideos(videos);
+    });
 }
