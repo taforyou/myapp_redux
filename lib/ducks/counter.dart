@@ -8,10 +8,10 @@ class IncrementalAction {
   IncrementalAction({this.count = 10});
 }
 
-final appReducer = combineReducers<AppState>([
-  TypedReducer<AppState, IncrementalAction>(setIncremental),
+final counterReducer = combineReducers<int>([
+  TypedReducer<int, IncrementalAction>(setIncremental),
 ]);
 
-AppState setIncremental(AppState state, IncrementalAction action) {
-  return AppState(count: state.count + action.count);
+int setIncremental(int state, IncrementalAction action) {
+  return state + action.count;
 }

@@ -41,6 +41,12 @@ class SetVideos extends VideoAction {
 // -- Reducer: เปลี่ยนแปลงข้อมุล --
 
 List<Video> videoReducer(List<Video> state, VideoAction action) {
+  print('Action is $action');
+
+  if (action is SetVideos) {
+    return action.videos;
+  }
+
   return state;
 }
 
@@ -55,17 +61,21 @@ Future<List<Video>> fetchVideos() async {
   }
 
   Map<String, dynamic> result = json.decode(response.body);
-  final videos = result['response']['categories'];
+  List<dynamic> videos = result['response']['categories'];
 
-  print('Result is $result');
+  print('Videos are $videos');
 
-  return videos.map((list) => Video.fromJson(list)).toList();
+  final List<Video> data = videos.map((video) => Video.fromJson(video)).toList();
+
+  return data;
 }
 
 // -- Epic --
 
 Stream<dynamic> fetchVideoEpic(
     Stream<dynamic> actions, EpicStore<AppState> store) {
+  print('Fetching Video...');
+
   return actions
       .where((action) => action is FetchVideos)
       .asyncMap((action) => fetchVideos())

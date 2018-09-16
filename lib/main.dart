@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux_epics/redux_epics.dart';
 
 import 'package:myapp_redux/ducks/state.dart';
 import 'package:myapp_redux/ducks/video.dart';
-import 'package:myapp_redux/ducks/counter.dart';
 
 void main() {
   final store = new Store<AppState>(
-    appReducer,
+    rootReducer,
     initialState: AppState.initial(),
+    middleware: [EpicMiddleware(allEpics)]
   );
 
   runApp(new MyApp(
@@ -49,53 +50,56 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text(
-              'You have pushed the button this many times:',
-            ),
-            new StoreConnector<AppState, int>(
-              converter: (Store<AppState> store) => store.state.count,
-              // context >> ค่าต่างๆ ของ Flutter เช่น Theme
-              // count >> อันนี้ส่วนของ State ใน redux
-              builder: (context, count) {
-                return new Text(
-                  count.toString(),
-                  style: Theme.of(context).textTheme.display1,
-                );
-              },
-            ),
-          ],
-        ),
+      body: Flex(
+        direction: Axis.horizontal,
+        children: [VideoList()]
       ),
       floatingActionButton: new StoreConnector<AppState, VoidCallback>(
         converter: (store) {
-          return () => store.dispatch(IncrementalAction());
+          return () => store.dispatch(FetchVideos());
         },
         builder: (context, callback) {
           return new FloatingActionButton(
             onPressed: callback,
-            tooltip: 'Increment',
+            tooltip: 'Load Data',
             child: new Icon(Icons.add),
           );
         },
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class VideoList extends StatelessWidget {
+  const VideoList({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new StoreConnector<AppState, List<Video>>(
+      converter: (Store<AppState> store) => store.state.videos,
+      // context >> ค่าต่างๆ ของ Flutter เช่น Theme
+      // count >> อันนี้ส่วนของ State ใน redux
+      builder: (context, videos) {
+        return Flexible(
+          child: ListView.builder(
+            itemCount: videos.length,
+            itemBuilder: (context, index) {
+              final video = videos[index];
+
+              return ListTile(
+                title: Text(video.name),
+                subtitle: Text(video.category),
+              );
+            },
+          )
+        );
+      },
     );
   }
 }
